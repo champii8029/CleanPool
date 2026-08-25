@@ -2,3 +2,5 @@
 # (el sitio solo usa el logo .jpeg) y trae datos más sensibles
 # (CURP, sello digital, QR) que no deben quedar en un repo público.
 CF 18.08.2026.pdf
+
+CleanPool/.git_disabled/

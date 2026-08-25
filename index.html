@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cotización · 844CleanPool</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-slate-200 min-h-screen">
+
+  <!-- Barra de herramientas (no se imprime) -->
+  <div class="toolbar sticky top-0 z-20 bg-slate-900 text-white shadow-md">
+    <div class="max-w-[900px] mx-auto flex flex-wrap items-center justify-between gap-3 px-4 py-3">
+      <h1 class="text-sm font-semibold tracking-wide text-slate-200">844CleanPool · Sistema de Cotizaciones</h1>
+      <div class="flex gap-2">
+        <button id="btnNewQuote" class="px-3 py-2 text-xs font-semibold rounded-md bg-slate-700 hover:bg-slate-600 transition">
+          + Nueva cotización
+        </button>
+        <button id="btnAddRow" class="px-3 py-2 text-xs font-semibold rounded-md bg-cp-teal hover:brightness-110 transition">
+          + Agregar concepto
+        </button>
+        <button id="btnPrint" class="px-3 py-2 text-xs font-semibold rounded-md bg-cp-gold text-slate-900 hover:brightness-110 transition">
+          🖨 Imprimir / Guardar PDF
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hoja de cotización -->
+  <main class="sheet-wrapper py-8 px-2">
+    <section id="sheet" class="sheet bg-white mx-auto shadow-xl">
+
+      <!-- Encabezado -->
+      <header class="flex items-start justify-between gap-6 pb-4 border-b-4 border-cp-navy">
+        <div class="flex items-center gap-4">
+          <img src="Clean Pool.jpeg" alt="Logo 844CleanPool" class="logo">
+          <div>
+            <p class="text-lg font-extrabold text-cp-navy leading-tight">844CleanPool</p>
+            <p class="text-xs text-slate-500 leading-snug editable-field" contenteditable="true">Mantenimiento y limpieza de albercas</p>
+            <p class="text-xs text-slate-500 leading-snug">
+              Tel: <span class="editable-field" contenteditable="true">844&nbsp;000&nbsp;0000</span> ·
+              <span class="editable-field" contenteditable="true">contacto@844cleanpool.com</span>
+            </p>
+          </div>
+        </div>
+
+        <div class="fiscal-box text-right text-[11px] text-slate-600 leading-snug">
+          <p class="font-bold text-cp-navy text-sm">SERGIO ALEJANDRO PEÑA CONTRERAS</p>
+          <p>RFC: PECS9312041L9</p>
+          <p>Régimen de Personas Físicas con<br>Actividades Empresariales y Profesionales</p>
+          <p>Calle 8 de Mayo 395, Col. Provivienda</p>
+          <p>C.P. 25020, Saltillo, Coahuila</p>
+        </div>
+      </header>
+
+      <!-- Título y folio -->
+      <section class="avoid-break flex flex-wrap items-center justify-between gap-4 my-5">
+        <h2 class="text-2xl font-extrabold tracking-wide text-cp-navy">COTIZACIÓN</h2>
+        <div class="folio-box grid grid-cols-2 gap-x-4 gap-y-1 text-[12px]">
+          <span class="font-semibold text-slate-500">No. Cotización</span>
+          <span class="editable-field font-bold text-cp-navy" id="quoteNumber" contenteditable="true">S155967</span>
+
+          <span class="font-semibold text-slate-500">Fecha</span>
+          <input type="date" id="quoteDate" class="border-0 p-0 text-right font-medium bg-transparent focus:outline-none">
+
+          <span class="font-semibold text-slate-500">Vigencia</span>
+          <input type="date" id="dueDate" class="border-0 p-0 text-right font-medium bg-transparent focus:outline-none">
+        </div>
+      </section>
+
+      <!-- Datos del cliente -->
+      <section class="avoid-break grid grid-cols-2 gap-4 mb-6 text-[12px]">
+        <div class="info-box">
+          <p class="label">Cliente</p>
+          <p class="editable-field font-semibold text-slate-800" id="clientName" contenteditable="true" data-placeholder="Nombre del cliente"></p>
+        </div>
+        <div class="info-box">
+          <p class="label">Vendedor</p>
+          <p class="editable-field font-semibold text-slate-800" id="sellerName" contenteditable="true">Sergio Contreras</p>
+        </div>
+      </section>
+
+      <!-- Tabla de conceptos -->
+      <table class="w-full text-[12px] border-collapse quote-table">
+        <thead>
+          <tr class="bg-cp-navy text-white">
+            <th class="text-left py-2 px-2">Descripción</th>
+            <th class="text-center py-2 px-2 w-[80px]">Cantidad</th>
+            <th class="text-right py-2 px-2 w-[100px]">P. Unitario</th>
+            <th class="text-center py-2 px-2 w-[70px]">IVA 16%</th>
+            <th class="text-right py-2 px-2 w-[100px]">Impuesto</th>
+            <th class="text-right py-2 px-2 w-[110px]">Importe</th>
+            <th class="no-print w-[36px]"></th>
+          </tr>
+        </thead>
+        <tbody id="itemsBody"><!-- filas dinámicas --></tbody>
+      </table>
+
+      <!-- Totales -->
+      <section class="avoid-break flex justify-end mt-4">
+        <div class="w-[280px] text-[12px]">
+          <div class="totals-row">
+            <span>Subtotal</span>
+            <span id="totalSubtotal">$0.00</span>
+          </div>
+          <div class="totals-row">
+            <span>IVA (16%)</span>
+            <span id="totalTax">$0.00</span>
+          </div>
+          <div class="totals-row totals-final">
+            <span>Total</span>
+            <span id="totalGrand">$0.00</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Notas -->
+      <section class="avoid-break mt-8 text-[11px] text-slate-500">
+        <p class="font-semibold text-slate-600 mb-1">Condiciones:</p>
+        <p class="editable-field" contenteditable="true">Precios en pesos mexicanos (MXN). Cotización válida hasta la fecha de vigencia indicada. Se requiere anticipo del 50% para confirmar el servicio.</p>
+      </section>
+
+      <!-- Pie de página -->
+      <footer class="quote-footer flex items-center justify-between text-[10px] text-slate-400 mt-10 pt-3 border-t border-slate-200">
+        <span class="editable-field" contenteditable="true">www.844cleanpool.com</span>
+        <span>Página 1 de 1</span>
+      </footer>
+
+    </section>
+  </main>
+
+  <!-- Plantilla de fila (usada por JS) -->
+  <template id="rowTemplate">
+    <tr class="item-row border-b border-slate-200">
+      <td class="py-2 px-2 align-top">
+        <input type="text" class="desc-main w-full font-medium text-slate-800 bg-transparent focus:outline-none" placeholder="Descripción del servicio">
+        <input type="text" class="desc-code w-full text-[10px] text-slate-400 bg-transparent focus:outline-none mt-0.5" placeholder="Código (ej. LIMP-001)">
+      </td>
+      <td class="py-2 px-2 align-top">
+        <div class="flex flex-col items-center gap-0.5">
+          <input type="number" class="qty w-full text-center bg-transparent focus:outline-none" value="1" min="0" step="1">
+          <input type="text" class="unit w-full text-center text-[10px] text-slate-400 bg-transparent focus:outline-none" value="Pza">
+        </div>
+      </td>
+      <td class="py-2 px-2 align-top">
+        <input type="number" class="price w-full text-right bg-transparent focus:outline-none" value="0" min="0" step="0.01">
+      </td>
+      <td class="py-2 px-2 align-top text-center">
+        <input type="checkbox" class="taxed" checked>
+      </td>
+      <td class="py-2 px-2 align-top text-right tax-amount">$0.00</td>
+      <td class="py-2 px-2 align-top text-right line-amount font-semibold">$0.00</td>
+      <td class="py-2 px-2 align-top text-center no-print">
+        <button class="removeRow text-red-500 hover:text-red-700 font-bold" title="Eliminar concepto">✕</button>
+      </td>
+    </tr>
+  </template>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

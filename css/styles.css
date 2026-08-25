@@ -1,0 +1,238 @@
+/* 844CleanPool — Sistema de Cotizaciones
+   Paleta tomada del logotipo: navy, dorado, turquesa, crema */
+
+:root {
+  --cp-navy: #1f3a5f;
+  --cp-gold: #d9a441;
+  --cp-teal: #2d7d8c;
+  --cp-cream: #fbf6ea;
+}
+
+/* Colores utilitarios usados en index.html (tailwind arbitrary-value fallback) */
+.text-cp-navy { color: var(--cp-navy); }
+.bg-cp-navy   { background-color: var(--cp-navy); }
+.bg-cp-gold   { background-color: var(--cp-gold); }
+.bg-cp-teal   { background-color: var(--cp-teal); }
+.border-cp-navy { border-color: var(--cp-navy); }
+
+body {
+  font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+}
+
+/* Hoja tipo carta */
+.sheet-wrapper {
+  background: #e2e8f0;
+}
+.sheet {
+  width: 100%;
+  max-width: 850px;
+  min-height: 1100px;
+  padding: 40px 48px;
+  border-radius: 4px;
+}
+
+.logo {
+  width: 76px;
+  height: 76px;
+  object-fit: contain;
+  border-radius: 50%;
+}
+
+.fiscal-box {
+  max-width: 300px;
+}
+
+.folio-box {
+  background: var(--cp-cream);
+  border: 1px solid #ecdfc0;
+  border-radius: 6px;
+  padding: 10px 16px;
+}
+
+.info-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 8px 12px;
+}
+.info-box .label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #94a3b8;
+  margin-bottom: 2px;
+}
+
+.editable-field {
+  outline: none;
+  cursor: text;
+  border-radius: 3px;
+  min-height: 1.2em;
+}
+.editable-field:hover {
+  background: rgba(45, 125, 140, 0.07);
+}
+.editable-field:focus {
+  background: rgba(217, 164, 65, 0.12);
+}
+.editable-field:empty:before {
+  content: attr(data-placeholder);
+  color: #94a3b8;
+  font-weight: 400;
+  pointer-events: none;
+}
+
+/* Tabla */
+.quote-table thead th {
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  font-weight: 600;
+}
+.quote-table tbody tr:nth-child(even) {
+  background: #f8fafc;
+}
+.quote-table input[type="number"],
+.quote-table input[type="text"] {
+  border: none;
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+.quote-table input[type="number"]:focus,
+.quote-table input[type="text"]:focus {
+  background: rgba(217, 164, 65, 0.12);
+}
+.quote-table input[type="checkbox"].taxed {
+  width: 15px;
+  height: 15px;
+  accent-color: var(--cp-teal);
+}
+
+/* Totales */
+.totals-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 10px;
+  color: #475569;
+}
+.totals-row.totals-final {
+  background: var(--cp-navy);
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+  border-radius: 6px;
+  margin-top: 4px;
+  padding: 10px;
+}
+
+/* ============ IMPRESIÓN ============ */
+@media print {
+  @page {
+    size: A4; /* estándar en México; usa "letter" solo si tu impresora/PDF está configurado a tamaño Carta */
+    margin: 14mm 12mm;
+  }
+
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  html, body {
+    background: #fff !important;
+    font-size: 12px;
+  }
+
+  .toolbar {
+    display: none !important;
+  }
+
+  .sheet-wrapper {
+    background: #fff !important;
+    padding: 0 !important;
+  }
+
+  .sheet {
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  /* Evita cortes feos entre páginas (nunca en #sheet: ese sí debe poder
+     extenderse a varias páginas cuando hay muchos conceptos) */
+  header,
+  .folio-box,
+  .info-box,
+  .totals-row,
+  .quote-footer,
+  .item-row,
+  .avoid-break {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .quote-table thead {
+    display: table-header-group; /* repite encabezado en cada página */
+  }
+
+  .quote-table tfoot {
+    display: table-footer-group;
+  }
+
+  .quote-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+
+  /* Limpia estados interactivos que no deben imprimirse */
+  .editable-field {
+    border: none !important;
+  }
+  .editable-field:hover,
+  .editable-field:focus {
+    background: transparent !important;
+  }
+  .editable-field:empty:before {
+    content: "" !important; /* no imprimir el texto de relleno */
+  }
+
+  .quote-table input:focus,
+  .quote-table input:hover {
+    background: transparent !important;
+  }
+
+  /* Oculta flechas de los campos numéricos */
+  .quote-table input[type="number"]::-webkit-outer-spin-button,
+  .quote-table input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .quote-table input[type="number"] {
+    -moz-appearance: textfield;
+  }
+
+  /* Fechas como texto plano, sin ícono de calendario */
+  input[type="date"] {
+    -webkit-appearance: none;
+    appearance: none;
+    position: relative;
+  }
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    display: none;
+  }
+
+  a[href]::after {
+    content: "";
+  }
+}
